@@ -6,12 +6,13 @@
   "scripts": {
     "setup": "DEBUG=platziverse:* && node setup.js",
     "lint": "standard",
-    "test": "DEBUG=platziverse:* && ava tests/ --verbose"
+    "test": "DEBUG=platziverse:* && nyc --reporter=lcov ava tests/ --verbose"
   },
   "author": "Alexis Holguin",
   "license": "MIT",
   "devDependencies": {
     "ava": "^1.3.1",
+    "nyc": "^13.3.0",
     "sqlite3": "^4.0.6",
     "standard": "^12.0.1"
   },
