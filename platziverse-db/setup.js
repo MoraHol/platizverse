@@ -5,7 +5,7 @@ const inquirer = require('inquirer')
 const chalk = require('chalk')
 
 const prompt = inquirer.createPromptModule()
-async function setup() {
+async function setup () {
   const answer = await prompt([{
     type: 'confirm',
     name: 'setup',
