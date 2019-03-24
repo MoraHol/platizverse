@@ -5,6 +5,9 @@ const mosca = require('mosca')
 const redis = require('redis')
 const chalk = require('chalk')
 const db = require('platziverse-db')
+const {
+  parsePayload
+} = require('./utils')
 const backend = {
   type: 'redis',
   redis,
@@ -26,20 +29,60 @@ const config = {
 }
 
 const server = new mosca.Server(settings)
-let Agent 
+const clients = new Map()
+let Agent
 let Metric
 
 server.on('clientConnected', client => {
   debug(`Client Connected: ${client.id}`)
+  clients.set(client.id, null)
 })
 
 server.on('clientDisconnected', client => {
   debug(`client Disconnected: ${client.id}`)
 })
 
-server.on('published', (packet, client) => {
+server.on('published', async (packet, client) => {
   debug(`Received : ${packet.topic}`)
-  debug(`Pyaload: ${packet.payload}`)
+
+  switch (packet.topic) {
+    case 'agent/connected':
+    case 'agent/disconnected':
+      debug(`Pyaload: ${packet.payload}`)
+      break
+    case 'agent/message':
+      debug(`Pyaload: ${packet.payload}`)
+      const payload = parsePayload(packet.payload)
+      if (payload) {
+        payload.Agent.connected = true
+        let agent
+        try {
+          agent = await Agent.createOrUpdate(payload.agent)
+        } catch (e) {
+          return handleError(e)
+        }
+        debug(`Agent ${agent.uuid} saved`)
+
+        // Notify Agent is Connected
+
+        if (!clients.get(client.id)) {
+          clients.set(client.id, agent)
+          server.publish({
+            topic: 'agent/connected',
+            payload: JSON.stringify({
+              agent: {
+                uuid: agent.uuid,
+                name: agent.name,
+                hostname: agent.hostname,
+                pid: agent.pid,
+                connected: agent.connected
+              }
+            })
+          })
+        }
+      }
+      break
+  }
 })
 
 server.on('ready', async () => {
@@ -55,6 +98,11 @@ function handleFatalEror (err) {
   console.error(`${chalk.red('[fatal error]')} ${err.message}`)
   console.error(err.stack)
   process.exit(1)
+}
+
+function handleError (err) {
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
+  console.error(err.stack)
 }
 
 process.on('uncaughtException', handleFatalEror)
