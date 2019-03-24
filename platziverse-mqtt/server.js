@@ -75,7 +75,7 @@ server.on('published', async (packet, client) => {
       debug(`Pyaload: ${packet.payload}`)
       const payload = parsePayload(packet.payload)
       if (payload) {
-        payload.Agent.connected = true
+        payload.agent.connected = true
         let agent
         try {
           agent = await Agent.createOrUpdate(payload.agent)

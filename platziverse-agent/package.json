@@ -1,0 +1,24 @@
+{
+  "name": "platziverse-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Simple IoT Platform - Agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoraHol/platizverse.git"
+  },
+  "author": "Alexis Holguin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MoraHol/platizverse/issues"
+  },
+  "homepage": "https://github.com/MoraHol/platizverse#readme",
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
+}
