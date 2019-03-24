@@ -32,6 +32,7 @@ agent.on('connected', handler)
 agent.on('disconnected', handler)
 agent.on('message', handler)
 
+// Other Agents
 agent.on('agent/connected')
 agent.on('agent/disconnected')
 agent.on('agent/message', payload => {
