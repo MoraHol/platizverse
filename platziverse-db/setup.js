@@ -6,15 +6,22 @@ const chalk = require('chalk')
 
 const prompt = inquirer.createPromptModule()
 async function setup () {
-  const answer = await prompt([{
-    type: 'confirm',
-    name: 'setup',
-    message: 'this will desttroy your database, are you sure?'
-  }])
-  if (!answer.setup) {
-    return console.log('Nothing happend :)')
+  if (process.argv[2] === '--yes' || process.argv[2] === '--y') {
+    resetDB()
+  } else {
+    const answer = await prompt([{
+      type: 'confirm',
+      name: 'setup',
+      message: 'this will destroy your database, are you sure?'
+    }])
+    if (!answer.setup) {
+      return console.log('Nothing happend :)')
+    }
+    resetDB()
   }
+}
 
+async function resetDB() {
   const config = {
     database: process.env.DB_NAME || 'platziverse',
     username: process.env.DB_USER || 'platzi',
@@ -31,7 +38,7 @@ async function setup () {
   process.exit(0)
 }
 
-function handleFatalEror (err) {
+function handleFatalEror(err) {
   console.error(`${chalk.red('[faltal error]')} ${err.mesaage}`)
   console.error(err.stack)
   process.exit(1)
