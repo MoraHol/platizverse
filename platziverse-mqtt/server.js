@@ -18,6 +18,30 @@ const settings = {
 
 const server = new mosca.Server(settings)
 
+server.on('clientConnected', client => {
+  debug(`Client Connected: ${client.id}`)
+})
+
+server.on('clientDisconnected', client => {
+  debug(`client Disconnected: ${client.id}`)
+})
+
+server.on('published', (packet, client) => {
+  debug(`Received : ${packet.topic}`)
+  debug(`Pyaload: ${packet.payload}`)
+})
+
 server.on('ready', () => {
   console.log(`${chalk.green('[platziverse-mqtt]')} server is runnig`)
 })
+
+server.on('error', handleFatalEror)
+
+function handleFatalEror (err) {
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
+  console.error(err.stack)
+  process.exit(1)
+}
+
+process.on('uncaughtException', handleFatalEror)
+process.on('unhandledRejection', handleFatalEror)
