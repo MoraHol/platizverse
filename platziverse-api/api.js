@@ -2,45 +2,104 @@
 
 const debug = require('debug')('platziverse:api:routes')
 const express = require('express')
+const asyncify = require('express-asyncify')
+const db = require('platziverse-db')
 
-const api = express.Router()
+const config = require('./config')
 
-api.get('/agents', (req, res) => {
-  debug('A request has come to /agents')
-  res.send({})
+const api = asyncify(express.Router())
+
+let services, Agent, Metric
+
+api.use('*', async (req, res, next) => {
+  if (!services) {
+    try {
+      debug('Connecting to database')
+      services = await db(config.db)
+    } catch (e) {
+      return next(e)
+    }
+    Agent = services.Agent
+    Metric = services.Metric
+  }
+  next()
 })
 
-api.get('/agent/:uuid', (req, res, next) => {
+api.get('/agents', async (req, res, next) => {
+  debug('A request has come to /agents')
+
+  let agents = []
+  try {
+    agents = await Agent.findConnected()
+  } catch (e) {
+    return next(e)
+  }
+  res.send(agents)
+})
+
+api.get('/agent/:uuid', async (req, res, next) => {
   const {
     uuid
   } = req.params
 
-  if (uuid !== 'yyy') {
-    return next(new Error('Agent not found'))
+  debug(`request to /agent/${uuid}`)
+
+  let agent
+  try {
+    agent = await Agent.findByUuid(uuid)
+  } catch (e) {
+    next(e)
   }
 
-  res.send({
-    uuid
-  })
+  if (!agent) {
+    return next(new Error(`Agent not found with uuid ${uuid}`))
+  }
+
+  res.send(agent)
 })
 
-api.get('/metrics/:uuid', (req, res) => {
+api.get('/metrics/:uuid', async (req, res, next) => {
   const {
     uuid
   } = req.params
-  res.send({
-    uuid
-  })
+
+  debug(`request to /metrics/${uuid}`)
+
+  let metrics = []
+
+  try {
+    metrics = await Metric.findByAgentUuid(uuid)
+  } catch (error) {
+    return next(error)
+  }
+
+  if (!metrics || metrics.length === 0) {
+    return next(new Error(`Metrics not found for agent with uuid ${uuid}`))
+  }
+
+  res.send(metrics)
 })
 
-api.get('/metrics/:uuid/:type', (req, res) => {
+api.get('/metrics/:uuid/:type', async (req, res, next) => {
   const {
     uuid,
     type
   } = req.params
-  res.send({
-    uuid,
-    type
-  })
+
+  debug(`request to /metrics/${uuid}/${type}`)
+
+  let metrics = []
+
+  try {
+    metrics = await metrics.findByTypeAgentUuid(type, uuid)
+  } catch (error) {
+    next(error)
+  }
+
+  if (!metrics || metrics.length === 0) {
+    return next(new Error(`Metrics ${type} not found for agent with uuid ${uuid}`))
+  }
+
+  res.send(metrics)
 })
 module.exports = api
