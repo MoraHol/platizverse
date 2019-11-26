@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Environment=NODE_ENV=production
 Environment=API_ENDPOINT=http://142.93.116.89
-Environment=SERVER_HOST=http://142.93.1.199
+Environment=SERVER_HOST=http://localhost
 Environment=MQTT_HOST=mqtt://142.93.116.89
 Type=simple
 User=root
