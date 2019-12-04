@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Environment=NODE_ENV=production
-Environment=API_ENDPOINT=http://142.93.116.89
-Environment=SERVER_HOST=http://localhost
-Environment=MQTT_HOST=mqtt://142.93.116.89
+Environment=API_ENDPOINT=http://138.197.215.53
+Environment=SERVER_HOST=http://167.172.215.249
+Environment=MQTT_HOST=mqtt://138.197.215.53
 Type=simple
 User=root
 WorkingDirectory=/usr/local/src/platziverse-web
