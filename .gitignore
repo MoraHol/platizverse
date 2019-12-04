@@ -1,8 +1,8 @@
 ssh
-plaziverse-agent/node_modules/
-plaziverse-api/node_modules/
-plaziverse-cli/node_modules/
-plaziverse-db/node_modules/
+plaziverse-agent/node_modules
+plaziverse-api/node_modules
+plaziverse-cli/node_modules
+plaziverse-db/node_modules
 
-node_modules/
+
 node_modules

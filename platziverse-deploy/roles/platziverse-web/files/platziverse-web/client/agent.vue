@@ -3,10 +3,10 @@
     <div>
       <h2 class="agent-title">{{name}} ({{pid}})</h2>
       <p class="agent-host">{{hostname}}</p>
-      <p class="agent-status">Connected: <span>{{connected}}</span></p>
-      <button v-on:click="toggleMetrics" class="button">Toggle Metrics</button>
+      <p class="agent-status">Conectado: <span>{{connected}}</span></p>
+      <button v-on:click="toggleMetrics" class="button">Mostrar/Ocultar Metricas</button>
       <div v-show="showMetrics">
-        <h3 class="metrics-title">Metrics</h3>
+        <h3 class="metrics-title">Metricas</h3>
         <metric
           :uuid="uuid"
           :socket="socket"
